@@ -1,21 +1,33 @@
 from django.contrib import messages
+from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect, render
-
-from ..forms.register_form import RegistrationForm
+from ..forms.sign_in_form import SignInForm
 
 
 def sign_in(request):
-    if request.method == "POST":
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Account created for {username}!')
-            return redirect('login/')
-        else:
-            form = RegistrationForm()
-            messages.error(request, f'Error!')
-            return render(request, 'accounts/register.html', {'form': form})
+    if request.user.is_authenticated:
+        return redirect("accounts:index_page")
+    if request.method != "POST":
+        form = SignInForm()
+        return render(request, 'accounts/signin.html', {"form": form})
+
+    form = SignInForm(request=request, data=request.POST)
+    if form.is_valid():
+        user = authenticate(
+            email=form.cleaned_data["username"],
+            password=form.cleaned_data["password"],
+        )
+        if user is not None:
+            login(request, user)
+            messages.success(request, f"Hello {user.username}! You have been logged in")
+            return redirect("accounts:index_page")
+
     else:
-        form = RegistrationForm()
-        return render(request, 'accounts/register.html', {'form': form})
+        for key, error in list(form.errors.items()):
+            if key == 'captcha' and error[0] == 'This field is required.':
+                messages.error(request, "You must pass the reCAPTCHA test")
+                continue
+
+            messages.error(request, error)
+        form = SignInForm()
+        return render(request, 'accounts/signin.html', {"form": form})

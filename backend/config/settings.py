@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import logging.config
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -41,9 +42,17 @@ THIRD_APPS = [
 
 LOCAL_APPS = [
     "src.apps.accounts",
+    "src.apps.common",
+    "src.apps.store",
 ]
 
-INSTALLED_APPS = THIRD_APPS + LOCAL_APPS
+
+EXTRA_MODULES = [
+    "ckeditor",
+    'captcha',
+]
+
+INSTALLED_APPS = THIRD_APPS + LOCAL_APPS + EXTRA_MODULES
 
 
 AUTH_USER_MODEL = "accounts.Account"
@@ -71,6 +80,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "src.apps.store.category_processors.all_categories",
             ],
         },
     },
@@ -129,6 +139,9 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -144,3 +157,35 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 PASSWORD_RESET_TIMEOUT = 14400
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'default',
+    },
+}
+
+RECAPTCHA_PUBLIC_KEY = "6LdTuyIkAAAAAAnVrSL61UmkwNRrRrZgAJD_YtPI"
+RECAPTCHA_PRIVATE_KEY = "6LdTuyIkAAAAAFcAMunC5khWbB5AzH2BENrxF_GK"
+
+# log file
+logging.config.dictConfig(
+    {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "file": {"format": "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"},
+        },
+        "handlers": {
+            "file": {
+                "level": "ERROR",
+                "class": "logging.FileHandler",
+                "formatter": "file",
+                "filename": "errors.log",
+            },
+        },
+        "loggers": {
+            "": {"level": "ERROR", "handlers": ["file"]},
+            "django.request": {"level": "INFO", "handlers": ["file"]},
+        },
+    }
+)
