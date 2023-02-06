@@ -6,7 +6,6 @@ from django.utils.deconstruct import deconstructible
 
 @deconstructible
 class PathAndRename(object):
-
     def __init__(self, sub_path):
         self.path = sub_path
 

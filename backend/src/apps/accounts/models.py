@@ -25,7 +25,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     objects = AccountManager()
 
     def __str__(self):
-        return self.email
+        return str(self.phone_number)
 
     def has_perm(self, perm, obj=None):
         return self.is_admin
@@ -41,16 +41,17 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(Account, on_delete=models.CASCADE)
-    profile_pic = models.ImageField(upload_to='profile_pics', default='profile_pics/default.png')
+    profile_pic = models.ImageField(upload_to="profile_pics", default="profile_pics/default.png", blank=True, null=True)
     city = models.CharField(max_length=50, blank=True)
     state = models.CharField(max_length=50, blank=True)
     address = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
-        return self.user.first_name
+        return str(self.user)
 
+    @property
     def full_address(self):
-        return f'{self.city} {self.state}'
+        return f"{self.city} {self.state}"
 
     class Meta:
         verbose_name = _("UserProfile")

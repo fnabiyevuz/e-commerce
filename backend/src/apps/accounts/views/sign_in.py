@@ -9,7 +9,7 @@ def sign_in(request):
         return redirect("accounts:index_page")
     if request.method != "POST":
         form = SignInForm()
-        return render(request, 'accounts/signin.html', {"form": form})
+        return render(request, "accounts/signin.html", {"form": form})
 
     form = SignInForm(request=request, data=request.POST)
     if form.is_valid():
@@ -20,14 +20,12 @@ def sign_in(request):
         if user is not None:
             login(request, user)
             messages.success(request, f"Hello {user.username}! You have been logged in")
-            return redirect("accounts:index_page")
+            return redirect("/")
 
     else:
         for key, error in list(form.errors.items()):
-            if key == 'captcha' and error[0] == 'This field is required.':
+            if key == "captcha" and error[0] == "This field is required.":
                 messages.error(request, "You must pass the reCAPTCHA test")
                 continue
 
             messages.error(request, error)
-        form = SignInForm()
-        return render(request, 'accounts/signin.html', {"form": form})

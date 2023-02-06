@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.contrib import messages
 
+
 def activate(request, uidb64):
     try:
         User = get_user_model()
@@ -14,5 +15,5 @@ def activate(request, uidb64):
         user.save()
         messages.success(request, "Account activated successfully")
         return redirect("accounts:login")
-    except Exception as e:
+    except Exception:
         return HttpResponse("Invalid activation link!")

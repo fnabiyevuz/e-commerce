@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
@@ -19,6 +20,11 @@ class Category(BaseModel):
     def __str__(self):
         return self.name
 
-    def save(self):
-        self.slug = slugify(self.name)
+    @property
+    def get_absolute_url(self):
+        return reverse("store:product_list_view", args=[self.slug])
+
+    def save(self, *args, **kwargs):
+        if self.slug:
+            self.slug = slugify(self.name)
         super(Category, self).save()

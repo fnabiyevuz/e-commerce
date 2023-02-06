@@ -39,11 +39,14 @@ def register(request):
                     subject = "Welcome to the site"
                     domain = f"http://{current_site.domain}/activate/{urlsafe_base64_encode(force_bytes(new_form))}/"
                     message = f"Hi {first_name} {last_name}, welcome to the site"
-                    body = render_to_string("accounts/verification.html", {
-                        "subject": subject,
-                        "body": message,
-                        "domain": domain,
-                    })
+                    body = render_to_string(
+                        "accounts/verification.html",
+                        {
+                            "subject": subject,
+                            "body": message,
+                            "domain": domain,
+                        },
+                    )
                     html_body = strip_tags(body)
                     sendmail = EmailMessage(
                         subject=subject,
@@ -52,9 +55,9 @@ def register(request):
                     )
                     sendmail.send()
 
-                messages.success(request, f'Account created for {username}!')
+                messages.success(request, f"Account created for {username}!")
                 return redirect("accounts:sign_in")
-        return render(request, 'accounts/register.html', {'form': form})
+        return render(request, "accounts/register.html", {"form": form})
     except Exception as e:
         messages.error(request, f"Error: {e}")
         return redirect("accounts:register")
