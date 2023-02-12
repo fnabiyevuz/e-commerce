@@ -44,6 +44,7 @@ LOCAL_APPS = [
     "src.apps.accounts",
     "src.apps.common",
     "src.apps.store",
+    "src.apps.cart",
 ]
 
 
@@ -81,6 +82,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "src.apps.store.category_processors.all_categories",
+                "src.apps.cart.item_counter.counter",
             ],
         },
     },
